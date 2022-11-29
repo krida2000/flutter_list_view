@@ -43,6 +43,9 @@ class FlutterSliverListController {
     }
   }
 
+  double? getItemOffset(int index) =>
+      _listView == null ? null : _listView!.getItemOffset(index);
+
   void attach(FlutterListViewElement listView) {
     _listView = listView;
   }
