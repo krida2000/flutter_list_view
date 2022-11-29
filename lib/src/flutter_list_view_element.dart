@@ -64,6 +64,15 @@ class FlutterListViewElement extends RenderObjectElement {
     }
   }
 
+  double? getItemOffset(int index) {
+    for (var item in (renderObject as FlutterListViewRender).paintedElements) {
+      if (item.index == index) {
+        return item.offset;
+      }
+    }
+    return null;
+  }
+
   @override
   void update(covariant FlutterSliverList newWidget) {
     final FlutterSliverList oldWidget = widget;
