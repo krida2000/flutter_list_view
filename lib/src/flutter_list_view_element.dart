@@ -197,6 +197,11 @@ class FlutterListViewElement extends RenderObjectElement {
     try {
       _isInScrolling = true;
       var position = parentScrollableState?.position;
+
+      if(position != null && position.maxScrollExtent < scrollOffset) {
+        scrollOffset = position.maxScrollExtent;
+      }
+
       await position?.animateTo(scrollOffset, duration: duration, curve: curve);
     } catch (e, s) {
       print("error in animateToIndex in flutter list view element, $e, $s");
@@ -205,7 +210,7 @@ class FlutterListViewElement extends RenderObjectElement {
       supressElementGenerate = false;
     }
 
-    jumpToIndex(index, offset, basedOnBottom);
+    //jumpToIndex(index, offset, basedOnBottom);
   }
 
   void ensureVisible(int index, double offset, bool basedOnBottom) {
