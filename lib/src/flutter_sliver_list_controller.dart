@@ -9,6 +9,8 @@ typedef FlutterSliverListControllerOnPaintItemPositionCallback = void Function(
 class FlutterSliverListController {
   final ValueNotifier<int?> stickyIndex = ValueNotifier<int?>(null);
 
+  bool disposed = false;
+
   FlutterSliverListControllerOnPaintItemPositionCallback?
       onPaintItemPositionsCallback;
 
@@ -56,5 +58,6 @@ class FlutterSliverListController {
 
   void dispose() {
     stickyIndex.dispose();
+    disposed = true;
   }
 }
