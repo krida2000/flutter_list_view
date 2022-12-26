@@ -248,13 +248,15 @@ class FlutterListViewRender extends RenderSliver
       }
     }
 
-    if (childManager.cachedElements.isNotEmpty) {
-      invokeLayoutCallback((constraints) {
-        for (var item in childManager.cachedElements) {
-          childManager.removeChildElement(item.element);
-        }
-      });
-      childManager.cachedElements.clear();
+    if (childManager.disableCacheItems) {
+      if (childManager.cachedElements.isNotEmpty) {
+        invokeLayoutCallback((constraints) {
+          for (var item in childManager.cachedElements) {
+            childManager.removeChildElement(item.element);
+          }
+        });
+        childManager.cachedElements.clear();
+      }
     }
 
     var extentResults = _calcPaintExtentAndCacehExtent();
@@ -392,7 +394,7 @@ class FlutterListViewRender extends RenderSliver
                 newHeight: itemHeight,
                 needUpdateNextElementOffset: false);
             _isAdjustOperation = true;
-            
+
             var extentResults = _calcPaintExtentAndCacehExtent();
             final double paintExtent = extentResults[0];
             final double cacheExtent = extentResults[1];
@@ -716,26 +718,26 @@ class FlutterListViewRender extends RenderSliver
           firstPainItemOffsetY = renderElement.offset;
         }
 
-        if (childManager.firstItemAlign == FirstItemAlign.end) {
-          var actualScrollExtent = childManager.totalItemHeight;
+        // if (childManager.firstItemAlign == FirstItemAlign.end) {
+        //   var actualScrollExtent = childManager.totalItemHeight;
 
-          var geometryScrollExtent = geometry!.scrollExtent;
-          if (actualScrollExtent < constraints.viewportMainAxisExtent) {
-            if (growInfo.axisDirection == AxisDirection.down) {
-              childOffset = Offset(
-                  childOffset.dx,
-                  childOffset.dy +
-                      constraints.viewportMainAxisExtent -
-                      actualScrollExtent);
-            } else {
-              childOffset = Offset(
-                  childOffset.dx,
-                  childOffset.dy +
-                      actualScrollExtent -
-                      constraints.viewportMainAxisExtent);
-            }
-          }
-        }
+        //   // var geometryScrollExtent = geometry!.scrollExtent;
+        //   if (actualScrollExtent < constraints.viewportMainAxisExtent) {
+        //     if (growInfo.axisDirection == AxisDirection.down) {
+        //       childOffset = Offset(
+        //           childOffset.dx,
+        //           childOffset.dy +
+        //               constraints.viewportMainAxisExtent -
+        //               actualScrollExtent);
+        //     } else {
+        //       childOffset = Offset(
+        //           childOffset.dx,
+        //           childOffset.dy +
+        //               actualScrollExtent -
+        //               constraints.viewportMainAxisExtent);
+        //     }
+        //   }
+        // }
 
         paintElements.add(FlutterListViewItemPosition(
             index: renderElement.index,
@@ -836,6 +838,27 @@ class FlutterListViewRender extends RenderSliver
         childManager.stickyElement!.element.renderObject == child) {
       return 0;
     } else {
+      if (childManager.firstItemAlign == FirstItemAlign.end) {
+        var actualScrollExtent = childManager.totalItemHeight;
+        final axisDirection = applyGrowthDirectionToAxisDirection(
+            constraints.axisDirection, constraints.growthDirection);
+
+        if (actualScrollExtent < constraints.viewportMainAxisExtent) {
+          if (axisDirection == AxisDirection.down) {
+            var delta = childScrollOffset(child)! - constraints.scrollOffset;
+            delta =
+                delta + constraints.viewportMainAxisExtent - actualScrollExtent;
+            return delta;
+          } else {
+            var delta = childScrollOffset(child)! - constraints.scrollOffset;
+            delta =
+                delta + constraints.viewportMainAxisExtent - actualScrollExtent;
+
+            return delta;
+          }
+        }
+      }
+
       return childScrollOffset(child)! - constraints.scrollOffset;
     }
   }
@@ -944,12 +967,12 @@ class FlutterListViewRender extends RenderSliver
     final bool rightWayUp = _getRightWayUp(constraints);
     double delta = childMainAxisPosition(child);
 
-    if (childManager.firstItemAlign == FirstItemAlign.end) {
-      if (childManager.totalItemHeight < constraints.viewportMainAxisExtent) {
-        delta = delta +
-            (constraints.viewportMainAxisExtent - childManager.totalItemHeight);
-      }
-    }
+    // if (childManager.firstItemAlign == FirstItemAlign.end) {
+    //   if (childManager.totalItemHeight < constraints.viewportMainAxisExtent) {
+    //     delta = delta +
+    //         (constraints.viewportMainAxisExtent - childManager.totalItemHeight);
+    //   }
+    // }
 
     final double crossAxisDelta = childCrossAxisPosition(child);
     double absolutePosition = mainAxisPosition - delta;

@@ -1,5 +1,6 @@
 import 'chat.dart';
 import 'chat2.dart';
+import 'chat3.dart';
 import 'flutter_list_view_performance.dart';
 import 'init_jump.dart';
 import 'init_jump_after_loaddata.dart';
@@ -11,6 +12,7 @@ import 'pull_to_refresh_list.dart';
 import 'separatedList.dart';
 import 'sticky_header.dart';
 import 'sticky_header_refresh.dart';
+import 'test_case2.dart';
 import 'test_keep_alive_issue.dart';
 import 'testlist.dart';
 import 'home.dart';
@@ -33,6 +35,7 @@ class SectionViewRoute {
     "/jumpToIndexPage": (context) => const JumpToIndexPage(),
     "/chat": (context) => const Chat(),
     "/chat2": (context) => const Chat2(),
+    "/chat3": (context) => const Chat3(),
     "/initJumpPage": (context) => const InitJumpPage(),
     "/initJumpAfterLoadDataPage": (context) =>
         const InitJumpAfterLoadDataPage(),
@@ -43,5 +46,6 @@ class SectionViewRoute {
     "/separatedListPage": (context) => const SeparatedListPage(),
     "/initJumpKeepPositionPage": (context) => const InitJumpKeepPositionPage(),
     "/testKeepAliveIssue":(context) => const TestKeepAliveIssue(),
+    "/testCase2": (context) => const TestCase2(),
   };
 }
