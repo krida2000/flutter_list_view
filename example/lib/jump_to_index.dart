@@ -21,6 +21,7 @@ class _JumpToIndexPageState extends State<JumpToIndexPage> {
   List<double> heights = [];
   List<Color> colors = [];
   bool alignToBottom = false;
+  bool disableCache = false;
   @override
   initState() {
     for (var i = 0; i < 100000; i++) {
@@ -71,7 +72,7 @@ class _JumpToIndexPageState extends State<JumpToIndexPage> {
                           int.parse(indexTextController.text),
                           offset: double.parse(offsetTextController.text),
                           offsetBasedOnBottom: alignToBottom,
-                          duration: const Duration(milliseconds: 3000),
+                          duration: const Duration(milliseconds: 300),
                           curve: Curves.ease);
                       await Future.delayed(const Duration(seconds: 1));
                       // indexTextController.text =
@@ -96,7 +97,7 @@ class _JumpToIndexPageState extends State<JumpToIndexPage> {
             children: [
               const Text("Offset: "),
               SizedBox(
-                  width: 80,
+                  width: 20,
                   child: TextField(controller: offsetTextController)),
               Checkbox(
                 value: alignToBottom,
@@ -106,7 +107,16 @@ class _JumpToIndexPageState extends State<JumpToIndexPage> {
                   });
                 },
               ),
-              const Text("Align to Bottom")
+              const Text("Align to Bottom"),
+              Checkbox(
+                value: disableCache,
+                onChanged: (value) {
+                  setState(() {
+                    disableCache = value ?? false;
+                  });
+                },
+              ),
+              const Text("Disable Cache")
             ],
           ),
           Expanded(
@@ -121,6 +131,7 @@ class _JumpToIndexPageState extends State<JumpToIndexPage> {
                 childCount: data.length,
                 preferItemHeight: 50,
                 // onItemHeight: (context) => 33
+                disableCacheItems: disableCache,
               ),
             ),
           ),

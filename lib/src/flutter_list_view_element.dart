@@ -232,7 +232,7 @@ class FlutterListViewElement extends RenderObjectElement {
 
   /// [notifyPositionChanged] is used to send ScrollNotification
   void notifyPositionChanged() {
-    WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       try {
         var position = parentScrollableState?.position;
 
@@ -251,7 +251,7 @@ class FlutterListViewElement extends RenderObjectElement {
   }
 
   void notifyStickyChanged(int? index) {
-    WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       if (widget.controller != null) {
         if (widget.controller!.stickyIndex.value != index) {
           widget.controller!.stickyIndex.value = index;
@@ -263,7 +263,7 @@ class FlutterListViewElement extends RenderObjectElement {
   void notifyPaintItemPositionsCallback(
       double widgetHeight, List<FlutterListViewItemPosition> paintElements) {
     try {
-      WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
         var onPaintItemPositionsCallback =
             widget.controller?.onPaintItemPositionsCallback;
         if (onPaintItemPositionsCallback != null) {
@@ -341,6 +341,15 @@ class FlutterListViewElement extends RenderObjectElement {
     if (widget.delegate is FlutterListViewDelegate) {
       var flutterListDelegate = widget.delegate as FlutterListViewDelegate;
       return flutterListDelegate.onItemSticky != null;
+    }
+
+    return false;
+  }
+
+  bool get disableCacheItems {
+    if (widget.delegate is FlutterListViewDelegate) {
+      var flutterListDelegate = widget.delegate as FlutterListViewDelegate;
+      return flutterListDelegate.disableCacheItems;
     }
 
     return false;
@@ -839,7 +848,7 @@ class FlutterListViewElement extends RenderObjectElement {
       /// It will create new one.
       if (!isPermanentItem(itemKey) && cachedElements.isNotEmpty) {
         /// Priority reuse same key elements
-        var matchedIndex = 0;
+        var matchedIndex = -1;
         for (var i = 0; i < cachedElements.length; i++) {
           if (cachedElements[i].itemKey == itemKey) {
             matchedIndex = i;
@@ -847,8 +856,18 @@ class FlutterListViewElement extends RenderObjectElement {
           }
         }
 
-        newElement = cachedElements[matchedIndex].element;
-        cachedElements.removeAt(matchedIndex);
+        if (matchedIndex == -1 && cachedElements.length > 20) {
+          if (firstItemAlign == FirstItemAlign.end) {
+            matchedIndex = cachedElements.length - 1;
+          } else {
+            matchedIndex = 0;
+          }
+        }
+
+        if (matchedIndex != -1) {
+          newElement = cachedElements[matchedIndex].element;
+          cachedElements.removeAt(matchedIndex);
+        }
       }
     }
 
