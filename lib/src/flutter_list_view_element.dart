@@ -198,7 +198,7 @@ class FlutterListViewElement extends RenderObjectElement {
       _isInScrolling = true;
       var position = parentScrollableState?.position;
 
-      if(position != null && position.maxScrollExtent < scrollOffset) {
+      if (position != null && position.maxScrollExtent < scrollOffset) {
         scrollOffset = position.maxScrollExtent;
       }
 
@@ -254,7 +254,12 @@ class FlutterListViewElement extends RenderObjectElement {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       if (widget.controller != null) {
         if (widget.controller!.stickyIndex.value != index) {
-          widget.controller!.stickyIndex.value = index;
+          try {
+            widget.controller!.stickyIndex.value = index;
+          } catch (e) {
+            // [ValueNotifier] may be disposed at this moment, so it's allowed
+            // to fail.
+          }
         }
       }
     });
